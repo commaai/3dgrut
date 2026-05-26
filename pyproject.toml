@@ -71,10 +71,26 @@ playground = [
     "kaolin>=0.17.0",
 ]
 
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+# Wheel needs to ship the tracer C++/CUDA sources and the tiny-cuda-nn / fmt
+# headers that torch.utils.cpp_extension.load compiles at runtime; without
+# these globs only editable installs work.
+"threedgut_tracer" = ["include/**/*", "src/**/*", "*.cpp"]
+"threedgrt_tracer" = ["include/**/*", "src/**/*", "*.cpp"]
+"thirdparty" = [
+  "tiny-cuda-nn/include/**/*",
+  "tiny-cuda-nn/dependencies/fmt/include/**/*",
+  "tiny-cuda-nn/dependencies/json/**/*",
+  "tiny-cuda-nn/dependencies/pybind11_json/**/*",
+]
+
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["threedgrut*", "threedgrt_tracer*", "threedgut_tracer*", "threedgrut_playground*"]
-exclude = ["thirdparty*", ".venv*"]
+include = ["threedgrut*", "threedgrt_tracer*", "threedgut_tracer*", "threedgrut_playground*", "thirdparty*"]
+exclude = [".venv*"]
 
 [tool.uv.sources]
 torch = { index = "pytorch" }
