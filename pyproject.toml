@@ -72,6 +72,17 @@ playground = [
     "kaolin>=0.17.0",
 ]
 
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+# JIT-compiled torch extensions need their own source files (.cu/.cuh/.cpp/.h/.slang)
+# at runtime. Without these globs, `pip install threedgrut` produces a wheel that
+# omits them, so torch.utils.cpp_extension.load can't build lib3dgut_cc/lib_3dgrt_cc
+# unless the consumer has the repo checked out for an editable install.
+"threedgut_tracer" = ["include/**/*", "src/**/*", "*.cpp"]
+"threedgrt_tracer" = ["include/**/*", "src/**/*", "*.cpp"]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["threedgrut*", "threedgrt_tracer*", "threedgut_tracer*", "threedgrut_playground*"]
