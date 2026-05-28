@@ -72,10 +72,32 @@ playground = [
     "kaolin>=0.17.0",
 ]
 
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+# Wheel needs to ship the tracer C++/CUDA sources and the minimal tiny-cuda-nn
+# headers that torch.utils.cpp_extension.load compiles at runtime; without
+# these globs only editable installs work. The tracers transitively include only
+# four tiny-cuda-nn headers (common.h, common_host.h, cpp_api.h, vec.h) plus the
+# fmt / json / pybind11_json header-only deps — so we ship exactly those, not the
+# whole tiny-cuda-nn/include tree (and never cutlass).
+"threedgut_tracer" = ["include/**/*", "src/**/*", "*.cpp"]
+"threedgrt_tracer" = ["include/**/*", "src/**/*", "*.cpp"]
+"thirdparty" = [
+  "tiny-cuda-nn/include/tiny-cuda-nn/common.h",
+  "tiny-cuda-nn/include/tiny-cuda-nn/common_host.h",
+  "tiny-cuda-nn/include/tiny-cuda-nn/cpp_api.h",
+  "tiny-cuda-nn/include/tiny-cuda-nn/vec.h",
+  "tiny-cuda-nn/dependencies/fmt/include/**/*",
+  "tiny-cuda-nn/dependencies/json/**/*",
+  "tiny-cuda-nn/dependencies/pybind11_json/**/*",
+]
+
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["threedgrut*", "threedgrt_tracer*", "threedgut_tracer*", "threedgrut_playground*"]
-exclude = ["thirdparty*", ".venv*"]
+include = ["threedgrut*", "threedgrt_tracer*", "threedgut_tracer*", "threedgrut_playground*", "thirdparty*"]
+exclude = [".venv*"]
 
 [tool.uv.sources]
 torch = { index = "pytorch" }
